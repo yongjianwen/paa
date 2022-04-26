@@ -150,7 +150,8 @@ Resources:
       Timeout: 60
       Description: A simple example for getAllListings with layer
       Policies:
-        - AWSLambdaBasicExecutionRole-063e51a5-1341-4b71-ab43-211f2963c780
+        - AWSLambdaBasicExecutionRole
+        - AWSLambda_FullAccess
       Layers:
         - arn:aws:lambda:ap-southeast-1:776435255066:layer:testLayer:2
   # Simple syntax to create a DynamoDB table with a single attribute primary key, more in
