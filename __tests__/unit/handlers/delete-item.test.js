@@ -2,10 +2,10 @@
 const dynamodb = require('aws-sdk/clients/dynamodb');
 
 // Import all functions from test.js
-const lambda = require('../../../src/handlers/test.js');
+const lambda = require('../../../src/handlers/delete-item.js');
 
 // This includes all tests for putItemHandler
-describe('Test testHandler', () => {
+describe('Test deleteItemHandler', () => {
     let putSpy;
 
     // One-time setup and teardown, see more in https://jestjs.io/docs/en/setup-teardown
@@ -33,7 +33,7 @@ describe('Test testHandler', () => {
         };
 
         // Invoke putItemHandler()
-        const result = await lambda.testHandler(event);
+        const result = await lambda.deleteItemHandler(event);
         const expectedResult = {
             statusCode: 200,
             body: event.body,

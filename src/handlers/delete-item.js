@@ -11,10 +11,10 @@ const tableName = process.env.SAMPLE_TABLE;
 /**
  * A simple example includes a HTTP post method to add one item to a DynamoDB table.
  */
-exports.testHandler = async (event) => {
+exports.deleteItemHandler = async (event) => {
     const { body, httpMethod, path } = event;
     if (httpMethod !== 'POST') {
-        throw new Error(`test postMethod only accepts POST method, you tried: ${httpMethod} method.`);
+        throw new Error(`deleteItem postMethod only accepts POST method, you tried: ${httpMethod} method.`);
     }
     // All log statements are written to CloudWatch by default. For more information, see
     // https://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-logging.html
