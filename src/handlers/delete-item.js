@@ -13,7 +13,7 @@ const tableName = process.env.SAMPLE_TABLE;
  */
 exports.deleteItemHandler = async (event) => {
     const { body, httpMethod, path } = event;
-    if (httpMethod !== 'POST') {
+    if (httpMethod !== 'DELETE') {
         throw new Error(`deleteItem postMethod only accepts POST method, you tried: ${httpMethod} method.`);
     }
     // All log statements are written to CloudWatch by default. For more information, see
