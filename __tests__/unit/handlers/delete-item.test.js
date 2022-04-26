@@ -28,7 +28,7 @@ describe('Test deleteItemHandler', () => {
         });
 
         const event = {
-            httpMethod: 'POST',
+            httpMethod: 'DELETE',
             body: '{"id":"id1","name":"name1"}',
         };
 
