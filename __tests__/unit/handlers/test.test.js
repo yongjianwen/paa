@@ -5,7 +5,7 @@ const dynamodb = require('aws-sdk/clients/dynamodb');
 const lambda = require('../../../src/handlers/test.js');
 
 // This includes all tests for putItemHandler
-describe('Test putItemHandler', () => {
+describe('Test testHandler', () => {
     let putSpy;
 
     // One-time setup and teardown, see more in https://jestjs.io/docs/en/setup-teardown
@@ -33,7 +33,7 @@ describe('Test putItemHandler', () => {
         };
 
         // Invoke putItemHandler()
-        const result = await lambda.putItemHandler(event);
+        const result = await lambda.testHandler(event);
         const expectedResult = {
             statusCode: 200,
             body: event.body,
