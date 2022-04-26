@@ -19,7 +19,7 @@ Globals:
     # to their current application. All the functions and roles in this application have to include it and
     # it has to be manually updated when you add resources to your application.
     # More information in https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_boundaries.html
-    PermissionsBoundary: !Sub 'arn:${AWS::Partition}:iam::${AWS::AccountId}:policy/${AppId}-${AWS::Region}-PermissionsBoundary'
+    PermissionsBoundary: !Sub "arn:${AWS::Partition}:iam::${AWS::AccountId}:policy/${AppId}-${AWS::Region}-PermissionsBoundary"
 
 Parameters:
   AppId:
@@ -113,7 +113,7 @@ Resources:
   # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlesssimpletable
 
   # This is a Lambda function config associated with the source code: delete-item.js
-  putItemFunction:
+  deleteItemFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: ./
