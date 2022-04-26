@@ -1,6 +1,6 @@
 const mssql = require('mssql')
 
-exports.getAllListingshandler = (event, context, callback) => {
+exports.getAllListingsHandler = (event, context, callback) => {
   console.log('hello world');
 
   //context.callbackWaitsForEmptyEventLoop = true
