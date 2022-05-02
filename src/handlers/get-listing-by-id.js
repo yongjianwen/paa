@@ -65,7 +65,13 @@ exports.getListingByIdHandler = (event, context, callback) => {
   
               Promise.all(promises3).then((lastResult) => {
                 mssql.close();
-                callback(null, lastResult);
+                let response = {
+                  statusCode: 200,
+                  headers: {},
+                  isBase64Encoded: false,
+                  body: JSON.stringify(lastResult)
+                }
+                callback(null, response);
               });
             });
           });
