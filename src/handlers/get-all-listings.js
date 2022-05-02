@@ -54,9 +54,15 @@ exports.getAllListingsHandler = (event, context, callback) => {
               });
             });
 
-            Promise.all(promises2).then((finalFinalResult) => {
+            Promise.all(promises2).then((lastResult) => {
               mssql.close();
-              callback(null, finalFinalResult);
+              let response = {
+                statusCode: 200,
+                headers: {},
+                isBase64Encoded: false,
+                body: JSON.stringify(lastResult)
+              }
+              callback(null, response);
             });
           });
         })
