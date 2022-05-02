@@ -5,7 +5,7 @@ const rdsPassword = process.env.RDS_PASSWORD;
 const rdsServer = process.env.RDS_SERVER;
 const rdsDatabase = process.env.RDS_DATABASE;
 
-exports.applyListingHandler = (event, context, callback) => {
+exports.commentListingHandler = (event, context, callback) => {
   const config = {
     user: rdsUser,
     password: rdsPassword,
