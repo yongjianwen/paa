@@ -14,6 +14,7 @@ exports.getAllListingsHandler = (event, context, callback) => {
   };
 
   console.log(event);
+  const userId = event.headers['userid'];
 
   mssql.connect(config, (err) => {
     if (err) {
@@ -27,9 +28,9 @@ exports.getAllListingsHandler = (event, context, callback) => {
         	(SELECT COUNT(*) FROM [AdoptionApplication] WHERE Listing = Listing.Id) AS ApplicationCount,
         	(SELECT COUNT(*) FROM [ListingComment] WHERE Listing = Listing.Id) AS CommentCount,
         	(SELECT COUNT(*) FROM [ListingLike] WHERE Listing = Listing.Id) AS LikeCount,
-          (SELECT COUNT(*) FROM [AdoptionApplication] WHERE Listing = Listing.Id AND Applicant = (SELECT Id FROM [User] WHERE UserId = '` + event.headers['userid'] + `')) AS MyApplicationCount,
-        	(SELECT COUNT(*) FROM [ListingComment] WHERE Listing = Listing.Id AND CommentedBy = (SELECT Id FROM [User] WHERE UserId = '` + event.headers['userid'] + `')) AS MyCommentCount,
-        	(SELECT COUNT(*) FROM [ListingLike] WHERE Listing = Listing.Id AND LikedBy = (SELECT Id FROM [User] WHERE UserId = '` + event.headers['userid'] + `')) AS MyLikeCount
+          (SELECT COUNT(*) FROM [AdoptionApplication] WHERE Listing = Listing.Id AND Applicant = (SELECT Id FROM [User] WHERE UserId = '` + userId + `')) AS MyApplicationCount,
+        	(SELECT COUNT(*) FROM [ListingComment] WHERE Listing = Listing.Id AND CommentedBy = (SELECT Id FROM [User] WHERE UserId = '` + userId + `')) AS MyCommentCount,
+        	(SELECT COUNT(*) FROM [ListingLike] WHERE Listing = Listing.Id AND LikedBy = (SELECT Id FROM [User] WHERE UserId = '` + userId + `')) AS MyLikeCount
         FROM [Listing]
       `)
         .then((result) => {

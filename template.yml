@@ -178,6 +178,86 @@ Resources:
           RDS_DATABASE: paa
       Layers:
         - arn:aws:lambda:ap-southeast-1:776435255066:layer:testLayer:2
+  likeListingFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./
+      Handler: src/handlers/like-listing.likeListingHandler
+      Runtime: nodejs14.x
+      MemorySize: 128
+      Timeout: 60
+      Description: To like or unlike a listing
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSLambda_FullAccess
+      Environment:
+        Variables:
+          RDS_USER: admin
+          RDS_PASSWORD: nxKFl7g7mxvExrkOqweP
+          RDS_SERVER: paa.cp6tsxfewlsf.ap-southeast-1.rds.amazonaws.com
+          RDS_DATABASE: paa
+      Layers:
+        - arn:aws:lambda:ap-southeast-1:776435255066:layer:testLayer:2
+  applyListingFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./
+      Handler: src/handlers/apply-listing.applyListingHandler
+      Runtime: nodejs14.x
+      MemorySize: 128
+      Timeout: 60
+      Description: To apply for a listing or cancel an existing one
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSLambda_FullAccess
+      Environment:
+        Variables:
+          RDS_USER: admin
+          RDS_PASSWORD: nxKFl7g7mxvExrkOqweP
+          RDS_SERVER: paa.cp6tsxfewlsf.ap-southeast-1.rds.amazonaws.com
+          RDS_DATABASE: paa
+      Layers:
+        - arn:aws:lambda:ap-southeast-1:776435255066:layer:testLayer:2
+  commentListingFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./
+      Handler: src/handlers/comment-listing.commentListingHandler
+      Runtime: nodejs14.x
+      MemorySize: 128
+      Timeout: 60
+      Description: To comment on a listing
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSLambda_FullAccess
+      Environment:
+        Variables:
+          RDS_USER: admin
+          RDS_PASSWORD: nxKFl7g7mxvExrkOqweP
+          RDS_SERVER: paa.cp6tsxfewlsf.ap-southeast-1.rds.amazonaws.com
+          RDS_DATABASE: paa
+      Layers:
+        - arn:aws:lambda:ap-southeast-1:776435255066:layer:testLayer:2
+  confirmListingFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./
+      Handler: src/handlers/confirm-listing.confirmListingHandler
+      Runtime: nodejs14.x
+      MemorySize: 128
+      Timeout: 60
+      Description: To confirm, reject or complete a listing
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSLambda_FullAccess
+      Environment:
+        Variables:
+          RDS_USER: admin
+          RDS_PASSWORD: nxKFl7g7mxvExrkOqweP
+          RDS_SERVER: paa.cp6tsxfewlsf.ap-southeast-1.rds.amazonaws.com
+          RDS_DATABASE: paa
+      Layers:
+        - arn:aws:lambda:ap-southeast-1:776435255066:layer:testLayer:2
 
   # DynamoDB table to store item: {id: <ID>, name: <NAME>}
   SampleTable:
