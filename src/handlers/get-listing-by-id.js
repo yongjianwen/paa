@@ -34,6 +34,7 @@ exports.getListingByIdHandler = (event, context, callback) => {
           
           Promise.all(promises).then((finalResult) => {
             //console.log(finalResult);
+            mssql.close();
             callback(null, finalResult);
           });
         })
