@@ -27,7 +27,13 @@ exports.applyListingHandler = (event, context, callback) => {
       req.query('INSERT INTO [ListingComment] (Body, CreatedDateTime, CommentedBy, Listing) VALUES (N\'' + comment + '\', SYSDATETIMEOFFSET(), (SELECT Id FROM [User] WHERE UserId = \'' + userId + '\'), ' + listingId + ')')
         .then(() => {
           mssql.close();
-          callback(null, true);
+          let response = {
+            statusCode: 200,
+            headers: {},
+            isBase64Encoded: false,
+            body: JSON.stringify(true)
+          };
+          callback(null, response);
         })
         .catch((error) => {
           console.log(error);

@@ -77,7 +77,7 @@ exports.getListingByIdHandler = (event, context, callback) => {
                   headers: {},
                   isBase64Encoded: false,
                   body: JSON.stringify(lastResult)
-                }
+                };
                 callback(null, response);
               });
             });

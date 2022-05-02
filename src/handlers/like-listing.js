@@ -32,7 +32,13 @@ exports.likeListingHandler = (event, context, callback) => {
               .then(() => {
                 console.log('deleted');
                 mssql.close();
-                callback(null, true);
+                let response = {
+                  statusCode: 200,
+                  headers: {},
+                  isBase64Encoded: false,
+                  body: JSON.stringify(true)
+                };
+                callback(null, response);
               })
               .catch((error2) => {
                 console.log(error2);
@@ -43,7 +49,13 @@ exports.likeListingHandler = (event, context, callback) => {
               .then(() => {
                 console.log('added');
                 mssql.close();
-                callback(null, true);
+                let response = {
+                  statusCode: 200,
+                  headers: {},
+                  isBase64Encoded: false,
+                  body: JSON.stringify(true)
+                };
+                callback(null, response);
               })
               .catch((error3) => {
                 console.log(error3);

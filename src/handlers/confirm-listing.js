@@ -37,7 +37,13 @@ exports.confirmListingHandler = (event, context, callback) => {
       req.query('UPDATE [AdoptionApplication] SET Status = \'' + status + '\' WHERE Listing = ' + listingId + ' AND Applicant = (SELECT Id FROM [User] WHERE UserId = \'' + userId + '\')')
         .then((result) => {
           mssql.close();
-          callback(null, true);
+          let response = {
+            statusCode: 200,
+            headers: {},
+            isBase64Encoded: false,
+            body: JSON.stringify(true)
+          };
+          callback(null, response);
         })
         .catch((error) => {
           console.log(error);
