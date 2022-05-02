@@ -138,8 +138,6 @@ Resources:
             Method: DELETE
   # Simple syntax to create a DynamoDB table with a single attribute primary key, more in
   # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlesssimpletable
-
-  # This is a Lambda function config associated with the source code: delete-item.js
   getAllListingsFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -148,14 +146,38 @@ Resources:
       Runtime: nodejs14.x
       MemorySize: 128
       Timeout: 60
-      Description: A simple example for getAllListings with layer
+      Description: To get all listings
       Policies:
         - AWSLambdaBasicExecutionRole
         - AWSLambda_FullAccess
+      Environment:
+        Variables:
+          RDS_USER: admin
+          RDS_PASSWORD: nxKFl7g7mxvExrkOqweP
+          RDS_SERVER: paa.cp6tsxfewlsf.ap-southeast-1.rds.amazonaws.com
+          RDS_DATABASE: paa
       Layers:
         - arn:aws:lambda:ap-southeast-1:776435255066:layer:testLayer:2
-  # Simple syntax to create a DynamoDB table with a single attribute primary key, more in
-  # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlesssimpletable
+  getListingByIdFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./
+      Handler: src/handlers/get-listing-by-id.getListingByIdHandler
+      Runtime: nodejs14.x
+      MemorySize: 128
+      Timeout: 60
+      Description: To get a listing by Id
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSLambda_FullAccess
+      Environment:
+        Variables:
+          RDS_USER: admin
+          RDS_PASSWORD: nxKFl7g7mxvExrkOqweP
+          RDS_SERVER: paa.cp6tsxfewlsf.ap-southeast-1.rds.amazonaws.com
+          RDS_DATABASE: paa
+      Layers:
+        - arn:aws:lambda:ap-southeast-1:776435255066:layer:testLayer:2
 
   # DynamoDB table to store item: {id: <ID>, name: <NAME>}
   SampleTable:

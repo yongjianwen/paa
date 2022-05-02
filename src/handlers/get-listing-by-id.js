@@ -5,7 +5,7 @@ const rdsPassword = process.env.RDS_PASSWORD;
 const rdsServer = process.env.RDS_SERVER;
 const rdsDatabase = process.env.RDS_DATABASE;
 
-exports.getAllListingsHandler = (event, context, callback) => {
+exports.getListingByIdHandler = (event, context, callback) => {
   const config = {
     user: rdsUser,
     password: rdsPassword,
@@ -19,7 +19,7 @@ exports.getAllListingsHandler = (event, context, callback) => {
       callback(err);
     } else {
       const req = new mssql.Request();
-      req.query('SELECT * FROM [Listing]')
+      req.query('SELECT * FROM [Listing] WHERE Id = ' + '1')
         .then((result) => {
           let promises = result.recordset.map((res) => {
             return req.query('SELECT * FROM [User] WHERE Id = ' + res.ListedBy)
