@@ -13,6 +13,8 @@ exports.getAllListingsHandler = (event, context, callback) => {
     database: rdsDatabase
   };
 
+  console.log(event);
+
   mssql.connect(config, (err) => {
     if (err) {
       console.log(err);
