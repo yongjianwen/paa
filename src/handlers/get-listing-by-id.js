@@ -27,9 +27,9 @@ exports.getListingByIdHandler = (event, context, callback) => {
         	(SELECT COUNT(*) FROM [AdoptionApplication] WHERE Listing = Listing.Id) AS ApplicationCount,
         	(SELECT COUNT(*) FROM [ListingComment] WHERE Listing = Listing.Id) AS CommentCount,
         	(SELECT COUNT(*) FROM [ListingLike] WHERE Listing = Listing.Id) AS LikeCount,
-          (SELECT COUNT(*) FROM [AdoptionApplication] WHERE Listing = Listing.Id AND Applicant = (SELECT Id FROM [User] WHERE UserId = '` + event.headers['userId'] + `')) AS MyApplicationCount,
-        	(SELECT COUNT(*) FROM [ListingComment] WHERE Listing = Listing.Id AND CommentedBy = (SELECT Id FROM [User] WHERE UserId = '` + event.headers['userId'] + `')) AS MyCommentCount,
-        	(SELECT COUNT(*) FROM [ListingLike] WHERE Listing = Listing.Id AND LikedBy = (SELECT Id FROM [User] WHERE UserId = '` + event.headers['userId'] + `')) AS MyLikeCount
+          (SELECT COUNT(*) FROM [AdoptionApplication] WHERE Listing = Listing.Id AND Applicant = (SELECT Id FROM [User] WHERE UserId = '` + event.headers['userid'] + `')) AS MyApplicationCount,
+        	(SELECT COUNT(*) FROM [ListingComment] WHERE Listing = Listing.Id AND CommentedBy = (SELECT Id FROM [User] WHERE UserId = '` + event.headers['userid'] + `')) AS MyCommentCount,
+        	(SELECT COUNT(*) FROM [ListingLike] WHERE Listing = Listing.Id AND LikedBy = (SELECT Id FROM [User] WHERE UserId = '` + event.headers['userid'] + `')) AS MyLikeCount
         FROM [Listing] WHERE Id = 
       ` + event['pathParameters']['listingId'])
         .then((result) => {
