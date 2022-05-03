@@ -30,8 +30,9 @@ exports.reviewApplicationHandler = (event, context, callback) => {
           let response = {
             statusCode: 200,
             headers: {
-              "Access-Control-Allow-Origin" : "*",
-              "Access-Control-Allow-Credentials" : true
+              "Access-Control-Allow-Headers" : "Content-Type",
+              // "Access-Control-Allow-Origin": "https://www.example.com",
+              "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
             },
             isBase64Encoded: false,
             body: JSON.stringify(true)
