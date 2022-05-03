@@ -16,8 +16,7 @@ exports.reviewApplicationHandler = (event, context, callback) => {
   console.log(event);
   const userId = event.headers['userid'];
   const applicationId = event['pathParameters']['applicationId'];
-  const rating = JSON.parse(event.body['rating']);
-  console.log(rating);
+  const rating = JSON.parse(event.body).rating;
 
   mssql.connect(config, (err) => {
     console.log('test1');
