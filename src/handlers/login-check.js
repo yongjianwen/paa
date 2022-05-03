@@ -28,7 +28,7 @@ exports.loginCheckHandler = (event, context, callback) => {
       callback(err);
     } else {
       const req = new mssql.Request();
-      req.query('SELECT COUNT(*) FROM [User] WHERE UserId = ' + userId)
+      req.query('SELECT COUNT(*) AS Count FROM [User] WHERE UserId = \'' + userId + '\'')
         .then((result) => {
           console.log(result);
           if (result.recordset[0].Count > 0) {
@@ -43,7 +43,7 @@ exports.loginCheckHandler = (event, context, callback) => {
             callback(null, response);
           } else {
             console.log('to add');
-            req.query('INSERT INTO [User] (Name, UserType, Email, Address, Phone, UserId) VALUES (\'' + name + '\', \'User\', \'' + email + '\', \'' + phone + '\', \'' + userId + '\')')
+            req.query('INSERT INTO [User] (Name, UserType, Email, Phone, UserId) VALUES (\'' + name + '\', \'User\', \'' + email + '\', \'' + phone + '\', \'' + userId + '\')')
               .then(() => {
                 console.log('added');
                 mssql.close();
