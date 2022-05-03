@@ -31,7 +31,7 @@ exports.putChatPairHandler = (event, context, callback) => {
           console.log(result);
           if (result.recordset[0].Count > 0) {
             console.log('to update');
-            req.query('UPDATE [ChatPair] SET LastUser = \'' + lastUser + '\', \'' + lastMessage + '\', SYSDATETIMEOFFSET() WHERE (User1 = \'' + userId + '\' AND User2 = \'' + targetUserId + '\') OR (User1 = \'' + targetUserId + '\' AND User2 = \'' + userId + '\')')
+            req.query('UPDATE [ChatPair] SET LastUser = \'' + lastUser + '\', LastMessage = \'' + lastMessage + '\', LastDateTime = SYSDATETIMEOFFSET() WHERE (User1 = \'' + userId + '\' AND User2 = \'' + targetUserId + '\') OR (User1 = \'' + targetUserId + '\' AND User2 = \'' + userId + '\')')
               .then(() => {
                 console.log('updated');
                 mssql.close();
