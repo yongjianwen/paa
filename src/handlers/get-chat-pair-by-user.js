@@ -22,7 +22,14 @@ exports.getChatPairByUserHandler = (event, context, callback) => {
       callback(err);
     } else {
       const req = new mssql.Request();
-      req.query('SELECT * FROM [ChatPair] WHERE User1 = \'' + userId + '\' OR User2 = \'' + userId + '\'')
+      req.query(`
+        SELECT
+          cp.*, us1.Name AS UserName1, us2.Name AS UserName2
+        FROM [ChatPair] cp
+        INNER JOIN [User] us1 ON us1.UserId = cp.User1
+        INNER JOIN [User] us2 ON us2.UserId = cp.User2
+        WHERE User1 = \'` + userId + `\' OR User2 = \'` + userId + `\'
+      `)
         .then((result) => {
           console.log(result);
           mssql.close();
