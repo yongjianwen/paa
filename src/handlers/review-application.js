@@ -24,7 +24,7 @@ exports.reviewApplicationHandler = (event, context, callback) => {
       callback(err);
     } else {
       const req = new mssql.Request();
-      req.query('UPDATE [AdoptionApplication] SET UserRating = ' + rating + ' WHERE Id = ' + applicationId)
+      req.query('UPDATE [AdoptionApplication] SET UserRating = \'' + rating + '\' WHERE Id = ' + applicationId)
         .then((result) => {
           mssql.close();
           let response = {
