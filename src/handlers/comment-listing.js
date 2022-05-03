@@ -16,7 +16,7 @@ exports.commentListingHandler = (event, context, callback) => {
   console.log(event);
   const userId = event.headers['userid'];
   const listingId = event['pathParameters']['listingId'];
-  const comment = event.body['comment'];
+  const comment = JSON.parse(event.body).comment;
 
   mssql.connect(config, (err) => {
     if (err) {
