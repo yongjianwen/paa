@@ -24,7 +24,7 @@ exports.getApplicationsByUserHandler = (event, context, callback) => {
       const req = new mssql.Request();
       req.query(`
         SELECT
-          aa.*, li.Name AS ListingName, us.Name AS UserName, img.FileName
+          aa.*, li.Name AS ListingName, us.Name AS UserName, img.FileName, us.UserId AS TargetUserId
         FROM [AdoptionApplication] aa
         INNER JOIN [Listing] li ON li.Id = aa.Listing
         INNER JOIN [User] us ON us.Id = li.ListedBy
