@@ -62,7 +62,7 @@ exports.getListingByIdHandler = (event, context, callback) => {
               let promises3 = finalFinalResult.map((finalFinalRes) => {
                 return req.query(`
                   SELECT
-                    lc.*, us.UserName
+                    lc.*, us.Name AS UserName
                   FROM [ListingComment] lc
                   INNER JOIN [User] us ON us.Id = lc.CommentedBy
                   WHERE Listing = ` + finalFinalRes.ID

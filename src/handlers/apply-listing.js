@@ -31,7 +31,7 @@ exports.applyListingHandler = (event, context, callback) => {
             console.log('to delete');
             req.query('SELECT TOP 1 Id FROM [AdoptionApplication] WHERE Status = \'Pending\' AND Listing = ' + listingId + ' AND Applicant = (SELECT Id FROM [User] WHERE UserId = \'' + userId + '\')')
               .then((result3) => {
-                let applicationId = result3.recordset[0].ID;
+                let applicationId = result3.recordset[0].Id;
                 req.query('UPDATE [AdoptionApplication] SET Status = \'Cancelled\' WHERE Id = ' + applicationId)
                   .then(() => {
                     console.log('deleted');
@@ -59,7 +59,7 @@ exports.applyListingHandler = (event, context, callback) => {
               })
           } else {
             console.log('to add');
-            req.query('INSERT INTO [AdoptionApplication] (Status, Applicant, Listing) VALUES (\'Pending\', (SELECT Id FROM [User] WHERE UserId = \'' + userId + '\'), ' + listingId + ')')
+            req.query('INSERT INTO [AdoptionApplication] (Status, Applicant, Listing, AppliedDateTime) VALUES (\'Pending\', (SELECT Id FROM [User] WHERE UserId = \'' + userId + '\'), ' + listingId + ', SYSDATETIMEOFFSET())')
               .then(() => {
                 console.log('added');
                 req.query('INSERT INTO [AdoptionApplicationDetail] (Status, CreatedDateTime, AdoptionApplication) VALUES (\'Pending\', SYSDATETIMEOFFSET(), (SELECT TOP 1 Id FROM [AdoptionApplication] WHERE Status = \'Pending\' AND Listing = ' + listingId + ' AND Applicant = (SELECT Id FROM [User] WHERE UserId = \'' + userId + '\')))')
