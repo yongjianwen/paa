@@ -22,7 +22,7 @@ exports.getChatPairByUserHandler = (event, context, callback) => {
       callback(err);
     } else {
       const req = new mssql.Request();
-      req.query('SELECT * FROM [ChatPair] WHERE User1 = \'' + userId + '\' OR User2 = \'' + userId + '\')')
+      req.query('SELECT * FROM [ChatPair] WHERE User1 = \'' + userId + '\' OR User2 = \'' + userId + '\'')
         .then((result) => {
           console.log(result);
           mssql.close();
