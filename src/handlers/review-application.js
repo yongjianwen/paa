@@ -19,21 +19,20 @@ exports.reviewApplicationHandler = (event, context, callback) => {
   const rating = event.body['rating'];
 
   mssql.connect(config, (err) => {
+    console.log('test1');
     if (err) {
       console.log(err);
       callback(err);
     } else {
+      console.log('test2');
       const req = new mssql.Request();
       req.query('UPDATE [AdoptionApplication] SET UserRating = \'' + rating + '\' WHERE Id = ' + applicationId)
-        .then((result) => {
+        .then(() => {
+          console.log('test3');
           mssql.close();
           let response = {
             statusCode: 200,
-            headers: {
-              "Access-Control-Allow-Headers" : "Content-Type",
-              // "Access-Control-Allow-Origin": "https://www.example.com",
-              "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
-            },
+            headers: {},
             isBase64Encoded: false,
             body: JSON.stringify(true)
           };
