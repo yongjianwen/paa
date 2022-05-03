@@ -26,7 +26,7 @@ exports.getListingByIdHandler = (event, context, callback) => {
       req.query(`
         SELECT
         	*,
-        	(SELECT COUNT(*) FROM [AdoptionApplication] WHERE Listing = Listing.Id) AS ApplicationCount,
+        	(SELECT COUNT(DISTINCT Applicant) FROM [AdoptionApplication] WHERE Listing = Listing.Id) AS ApplicationCount,
         	(SELECT COUNT(*) FROM [ListingComment] WHERE Listing = Listing.Id) AS CommentCount,
         	(SELECT COUNT(*) FROM [ListingLike] WHERE Listing = Listing.Id) AS LikeCount,
           (SELECT COUNT(*) FROM [AdoptionApplication] WHERE Status = \'Pending\' AND Listing = Listing.Id AND Applicant = (SELECT Id FROM [User] WHERE UserId = '` + userId + `')) AS MyApplicationCount,
