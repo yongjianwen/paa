@@ -16,9 +16,11 @@ exports.loginCheckHandler = (event, context, callback) => {
   console.log(event);
   const userId = event.headers['userid'];
   const body = JSON.parse(event.body);
-  const name = body.name;
-  const email = body.email;
-  const phone = body.contact;
+  console.log(body);
+  const name = JSON.parse(event.body).name;
+  console.log(body.name);
+  const email = JSON.parse(event.body).email;
+  const phone = JSON.parse(event.body).contact;
 
   mssql.connect(config, (err) => {
     if (err) {
