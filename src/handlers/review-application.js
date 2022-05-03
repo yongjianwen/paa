@@ -29,7 +29,10 @@ exports.reviewApplicationHandler = (event, context, callback) => {
           mssql.close();
           let response = {
             statusCode: 200,
-            headers: {},
+            headers: {
+              "Access-Control-Allow-Origin" : "*",
+              "Access-Control-Allow-Credentials" : true
+            },
             isBase64Encoded: false,
             body: JSON.stringify(true)
           };
