@@ -37,37 +37,43 @@ exports.getListingByIdHandler = (event, context, callback) => {
         .then((result) => {
           let promises = result.recordset.map((res) => {
             return req.query('SELECT * FROM [User] WHERE Id = ' + res.ListedBy)
-            .then((result2) => {
-              res.user = result2.recordset;
-              return res
-            })
-            .catch((error2) => {
-              console.log(error2);
-            });
+              .then((result2) => {
+                res.user = result2.recordset;
+                return res;
+              })
+              .catch((error2) => {
+                console.log(error2);
+              });
           });
           
           Promise.all(promises).then((finalResult) => {
             let promises2 = finalResult.map((finalRes) => {
               return req.query('SELECT * FROM [ListingImage] WHERE Listing = ' + finalRes.ID)
-              .then((result3) => {
-                finalRes.imageUrls = result3.recordset;
-                return finalRes;
-              })
-              .catch((error3) => {
-                console.log(error3);
-              });
+                .then((result3) => {
+                  finalRes.imageUrls = result3.recordset;
+                  return finalRes;
+                })
+                .catch((error3) => {
+                  console.log(error3);
+                });
             });
 
             Promise.all(promises2).then((finalFinalResult) => {
               let promises3 = finalFinalResult.map((finalFinalRes) => {
-                return req.query('SELECT * FROM [ListingComment] WHERE Listing = ' + finalFinalRes.ID)
-                .then((result4) => {
-                  finalFinalRes.comments = result4.recordset;
-                  return finalFinalRes;
-                })
-                .catch((error4) => {
-                  console.log(error4);
-                });
+                return req.query(`
+                  SELECT
+                    lc.*, us.UserName
+                  FROM [ListingComment] lc
+                  INNER JOIN [User] us ON us.Id = lc.CommentedBy
+                  WHERE Listing = ` + finalFinalRes.ID
+                )
+                  .then((result4) => {
+                    finalFinalRes.comments = result4.recordset;
+                    return finalFinalRes;
+                  })
+                  .catch((error4) => {
+                    console.log(error4);
+                  });
               });
   
               Promise.all(promises3).then((lastResult) => {

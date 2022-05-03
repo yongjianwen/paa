@@ -5,7 +5,7 @@ const rdsPassword = process.env.RDS_PASSWORD;
 const rdsServer = process.env.RDS_SERVER;
 const rdsDatabase = process.env.RDS_DATABASE;
 
-exports.confirmListingHandler = (event, context, callback) => {
+exports.getApplicationByUserAndIdHandler = (event, context, callback) => {
   const config = {
     user: rdsUser,
     password: rdsPassword,
@@ -16,7 +16,6 @@ exports.confirmListingHandler = (event, context, callback) => {
   console.log(event);
   const userId = event.headers['userid'];
   const applicationId = event['pathParameters']['applicationId'];
-  const action = event.body['action'];
 
   mssql.connect(config, (err) => {
     if (err) {
@@ -24,26 +23,25 @@ exports.confirmListingHandler = (event, context, callback) => {
       callback(err);
     } else {
       const req = new mssql.Request();
-      // Pending, Cancelled, Confirmed, Rejected, Completed
-      let status = '';
-      if (action.toLowerCase() === 'confirm') {
-        status = 'Confirmed';
-      } else if (action.toLowerCase() === 'reject') {
-        status = 'Rejected';
-      } else if (action.toLowerCase() === 'complete') {
-        status = 'Completed';
-      }
-
-      req.query('UPDATE [AdoptionApplication] SET Status = \'' + status + '\' WHERE Id = ' + applicationId)
+      req.query(`
+        SELECT
+          aa.*, li.Name AS ListingName, us.Name AS UserName, img.FileName
+        FROM [AdoptionApplication] aa
+        INNER JOIN [Listing] li ON li.Id = aa.Listing
+        INNER JOIN [User] us ON us.Id = li.ListedBy
+        LEFT JOIN [ListingImage] img ON img.Listing = li.Id AND img.Id = (SELECT MIN(img2.Id) FROM [ListingImage] img2 WHERE img2.Listing = li.Id)
+        WHERE Applicant = (SELECT Id FROM [User] WHERE UserId = \'` + userId + `\') AND aa.Id = ` + applicationId
+      )
         .then((result) => {
-          req.query('INSERT INTO [AdoptionApplicationDetail] (Status, CreatedDateTime, AdoptionApplication) VALUES (\'' + status + '\', SYSDATETIMEOFFSET(), ' + applicationId + ')')
+          req.query('SELECT * FROM [AdoptionApplicationDetail] WHERE AdoptionApplication = ' + applicationId + ' ORDER BY CreatedDateTime')
             .then((result2) => {
+              result.recordset[0].details = result2.recordset;
               mssql.close();
               let response = {
                 statusCode: 200,
                 headers: {},
                 isBase64Encoded: false,
-                body: JSON.stringify(true)
+                body: JSON.stringify(result.recordset)
               };
               callback(null, response);
             })
@@ -53,7 +51,7 @@ exports.confirmListingHandler = (event, context, callback) => {
         })
         .catch((error) => {
           console.log(error);
-        })
+        });
     }
   });
 

@@ -29,34 +29,53 @@ exports.applyListingHandler = (event, context, callback) => {
           console.log(result);
           if (result.recordset[0].Count > 0) {
             console.log('to delete');
-            req.query('UPDATE [AdoptionApplication] SET Status = \'Cancelled\' WHERE Status = \'Pending\' AND Listing = ' + listingId + ' AND Applicant = (SELECT Id FROM [User] WHERE UserId = \'' + userId + '\')')
-              .then(() => {
-                console.log('deleted');
-                mssql.close();
-                let response = {
-                  statusCode: 200,
-                  headers: {},
-                  isBase64Encoded: false,
-                  body: JSON.stringify(true)
-                };
-                callback(null, response);
+            req.query('SELECT TOP 1 Id FROM [AdoptionApplication] WHERE Status = \'Pending\' AND Listing = ' + listingId + ' AND Applicant = (SELECT Id FROM [User] WHERE UserId = \'' + userId + '\')')
+              .then((result3) => {
+                let applicationId = result3.recordset[0].ID;
+                req.query('UPDATE [AdoptionApplication] SET Status = \'Cancelled\' WHERE Id = ' + applicationId)
+                  .then(() => {
+                    console.log('deleted');
+                    req.query('INSERT INTO [AdoptionApplicationDetail] (Status, CreatedDateTime, AdoptionApplication) VALUES (\'Cancelled\', SYSDATETIMEOFFSET(), ' + applicationId + ')')
+                      .then((result2) => {
+                        mssql.close();
+                        let response = {
+                          statusCode: 200,
+                          headers: {},
+                          isBase64Encoded: false,
+                          body: JSON.stringify(true)
+                        };
+                        callback(null, response);
+                      })
+                      .catch((error2) => {
+                        console.log(error2);
+                      })
+                  })
+                  .catch((error2) => {
+                    console.log(error2);
+                  })
               })
-              .catch((error2) => {
-                console.log(error2);
+              .catch((error3) => {
+                console.log(error3);
               })
           } else {
             console.log('to add');
             req.query('INSERT INTO [AdoptionApplication] (Status, Applicant, Listing) VALUES (\'Pending\', (SELECT Id FROM [User] WHERE UserId = \'' + userId + '\'), ' + listingId + ')')
               .then(() => {
                 console.log('added');
-                mssql.close();
-                let response = {
-                  statusCode: 200,
-                  headers: {},
-                  isBase64Encoded: false,
-                  body: JSON.stringify(true)
-                };
-                callback(null, response);
+                req.query('INSERT INTO [AdoptionApplicationDetail] (Status, CreatedDateTime, AdoptionApplication) VALUES (\'Pending\', SYSDATETIMEOFFSET(), (SELECT TOP 1 Id FROM [AdoptionApplication] WHERE Status = \'Pending\' AND Listing = ' + listingId + ' AND Applicant = (SELECT Id FROM [User] WHERE UserId = \'' + userId + '\')))')
+                  .then((result2) => {
+                    mssql.close();
+                    let response = {
+                      statusCode: 200,
+                      headers: {},
+                      isBase64Encoded: false,
+                      body: JSON.stringify(true)
+                    };
+                    callback(null, response);
+                  })
+                  .catch((error2) => {
+                    console.log(error2);
+                  })
               })
               .catch((error3) => {
                 console.log(error3);
