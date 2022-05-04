@@ -43,14 +43,14 @@ exports.reviewApplicationHandler = (event, context, callback) => {
           req.query(sql)
             .then(() => {
               if (result.recordset[0].UserType === 'Shelter') {
-                sql = 'SELECT ROUND(AVG(CAST(ShelterRating AS DECIMAL)), 2) FROM [AdoptionApplication] WHERE Applicant = (SELECT Id FROM [User] WHERE UserId = \'' + targetUserId + '\')';
+                sql = 'SELECT ROUND(AVG(CAST(ShelterRating AS DECIMAL)), 2) AS AverageRating FROM [AdoptionApplication] WHERE Applicant = (SELECT Id FROM [User] WHERE UserId = \'' + targetUserId + '\')';
               } else {
-                sql = 'SELECT ROUND(AVG(CAST(UserRating AS DECIMAL)), 2) FROM [AdoptionApplication] aa INNER JOIN [Listing] li ON li.Id = aa.Listing WHERE li.ListedBy = (SELECT Id FROM [User] WHERE UserId = \'' + targetUserId + '\')';
+                sql = 'SELECT ROUND(AVG(CAST(UserRating AS DECIMAL)), 2) AS AverageRating FROM [AdoptionApplication] aa INNER JOIN [Listing] li ON li.Id = aa.Listing WHERE li.ListedBy = (SELECT Id FROM [User] WHERE UserId = \'' + targetUserId + '\')';
               }
               req.query(sql)
                 .then((result2) => {
                   console.log(result2.recordset);
-                  req.query('UPDATE [User] SET Rating = \'' + result2.recordset + '\' WHERE UserId = \'' + targetUserId + '\'')
+                  req.query('UPDATE [User] SET Rating = \'' + result2.recordset[0].AverageRating + '\' WHERE UserId = \'' + targetUserId + '\'')
                     .then(() => {
                       mssql.close();
                       let response = {
