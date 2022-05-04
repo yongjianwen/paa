@@ -24,6 +24,7 @@ exports.getUserHandler = (event, context, callback) => {
       const req = new mssql.Request();
       req.query('SELECT * FROM [User] WHERE UserId = \'' + userId + '\'')
         .then((result) => {
+          mssql.close();
           let response = {
             statusCode: 200,
             headers: {},
