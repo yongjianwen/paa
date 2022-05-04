@@ -23,31 +23,69 @@ exports.getApplicationByUserAndIdHandler = (event, context, callback) => {
       callback(err);
     } else {
       const req = new mssql.Request();
-      req.query(`
-        SELECT
-          aa.*, li.Name AS ListingName, us.Name AS UserName, img.FileName, us.UserId AS TargetUserId
-        FROM [AdoptionApplication] aa
-        INNER JOIN [Listing] li ON li.Id = aa.Listing
-        INNER JOIN [User] us ON us.Id = li.ListedBy
-        LEFT JOIN [ListingImage] img ON img.Listing = li.Id AND img.Id = (SELECT MIN(img2.Id) FROM [ListingImage] img2 WHERE img2.Listing = li.Id)
-        WHERE Applicant = (SELECT Id FROM [User] WHERE UserId = \'` + userId + `\') AND aa.Id = ` + applicationId
-      )
+      req.query('SELECT UserType FROM [User] WHERE UserId = \'' + userId + '\'')
         .then((result) => {
-          req.query('SELECT * FROM [AdoptionApplicationDetail] WHERE AdoptionApplication = ' + applicationId + ' ORDER BY CreatedDateTime')
-            .then((result2) => {
-              result.recordset[0].details = result2.recordset;
-              mssql.close();
-              let response = {
-                statusCode: 200,
-                headers: {},
-                isBase64Encoded: false,
-                body: JSON.stringify(result.recordset)
-              };
-              callback(null, response);
-            })
-            .catch((error2) => {
-              console.log(error2);
-            });
+          if (result.recordset[0].UserType === 'Shelter') {
+            req.query(`
+              SELECT
+                aa.*, li.Name AS ListingName, us.Name AS UserName, img.FileName, us.UserId AS TargetUserId
+              FROM [AdoptionApplication] aa
+              INNER JOIN [Listing] li ON li.Id = aa.Listing
+              INNER JOIN [User] us ON us.Id = aa.Applicant
+              LEFT JOIN [ListingImage] img ON img.Listing = li.Id AND img.Id = (SELECT MIN(img2.Id) FROM [ListingImage] img2 WHERE img2.Listing = li.Id)
+              WHERE li.ListedBy = (SELECT Id FROM [User] WHERE UserId = \'` + userId + `\') AND aa.Id = ` + applicationId
+            )
+              .then((result2) => {
+                req.query('SELECT * FROM [AdoptionApplicationDetail] WHERE AdoptionApplication = ' + applicationId + ' ORDER BY CreatedDateTime')
+                  .then((result3) => {
+                    result2.recordset[0].details = result3.recordset;
+                    mssql.close();
+                    let response = {
+                      statusCode: 200,
+                      headers: {},
+                      isBase64Encoded: false,
+                      body: JSON.stringify(result2.recordset)
+                    };
+                    callback(null, response);
+                  })
+                  .catch((error3) => {
+                    console.log(error3);
+                  });
+              })
+              .catch((error2) => {
+                console.log(error2);
+              }); 
+          } else {
+            req.query(`
+              SELECT
+                aa.*, li.Name AS ListingName, us.Name AS UserName, img.FileName, us.UserId AS TargetUserId
+              FROM [AdoptionApplication] aa
+              INNER JOIN [Listing] li ON li.Id = aa.Listing
+              INNER JOIN [User] us ON us.Id = li.ListedBy
+              LEFT JOIN [ListingImage] img ON img.Listing = li.Id AND img.Id = (SELECT MIN(img2.Id) FROM [ListingImage] img2 WHERE img2.Listing = li.Id)
+              WHERE aa.Applicant = (SELECT Id FROM [User] WHERE UserId = \'` + userId + `\') AND aa.Id = ` + applicationId
+            )
+              .then((result2) => {
+                req.query('SELECT * FROM [AdoptionApplicationDetail] WHERE AdoptionApplication = ' + applicationId + ' ORDER BY CreatedDateTime')
+                  .then((result3) => {
+                    result2.recordset[0].details = result3.recordset;
+                    mssql.close();
+                    let response = {
+                      statusCode: 200,
+                      headers: {},
+                      isBase64Encoded: false,
+                      body: JSON.stringify(result2.recordset)
+                    };
+                    callback(null, response);
+                  })
+                  .catch((error3) => {
+                    console.log(error3);
+                  });
+              })
+              .catch((error2) => {
+                console.log(error2);
+              }); 
+          }
         })
         .catch((error) => {
           console.log(error);

@@ -22,24 +22,56 @@ exports.getApplicationsByUserHandler = (event, context, callback) => {
       callback(err);
     } else {
       const req = new mssql.Request();
-      req.query(`
-        SELECT
-          aa.*, li.Name AS ListingName, us.Name AS UserName, img.FileName, us.UserId AS TargetUserId
-        FROM [AdoptionApplication] aa
-        INNER JOIN [Listing] li ON li.Id = aa.Listing
-        INNER JOIN [User] us ON us.Id = li.ListedBy
-        LEFT JOIN [ListingImage] img ON img.Listing = li.Id AND img.Id = (SELECT MIN(img2.Id) FROM [ListingImage] img2 WHERE img2.Listing = li.Id)
-        WHERE Applicant = (SELECT Id FROM [User] WHERE UserId = \'` + userId + `\')
-      `)
+      req.query('SELECT UserType FROM [User] WHERE UserId = \'' + userId + '\'')
         .then((result) => {
-          mssql.close();
-          let response = {
-            statusCode: 200,
-            headers: {},
-            isBase64Encoded: false,
-            body: JSON.stringify(result.recordset)
-          };
-          callback(null, response);
+          console.log(result.recordset);
+          if (result.recordset[0].UserType === 'Shelter') {
+            req.query(`
+              SELECT
+                aa.*, li.Name AS ListingName, us.Name AS UserName, img.FileName, us.UserId AS TargetUserId
+              FROM [AdoptionApplication] aa
+              INNER JOIN [Listing] li ON li.Id = aa.Listing
+              INNER JOIN [User] us ON us.Id = aa.Applicant
+              LEFT JOIN [ListingImage] img ON img.Listing = li.Id AND img.Id = (SELECT MIN(img2.Id) FROM [ListingImage] img2 WHERE img2.Listing = li.Id)
+              WHERE li.ListedBy = (SELECT Id FROM [User] WHERE UserId = \'` + userId + `\')
+            `)
+              .then((result2) => {
+                mssql.close();
+                let response = {
+                  statusCode: 200,
+                  headers: {},
+                  isBase64Encoded: false,
+                  body: JSON.stringify(result2.recordset)
+                };
+                callback(null, response);
+              })
+              .catch((error2) => {
+                console.log(error2);
+              });
+          } else {
+            req.query(`
+              SELECT
+                aa.*, li.Name AS ListingName, us.Name AS UserName, img.FileName, us.UserId AS TargetUserId
+              FROM [AdoptionApplication] aa
+              INNER JOIN [Listing] li ON li.Id = aa.Listing
+              INNER JOIN [User] us ON us.Id = li.ListedBy
+              LEFT JOIN [ListingImage] img ON img.Listing = li.Id AND img.Id = (SELECT MIN(img2.Id) FROM [ListingImage] img2 WHERE img2.Listing = li.Id)
+              WHERE aa.Applicant = (SELECT Id FROM [User] WHERE UserId = \'` + userId + `\')
+            `)
+              .then((result2) => {
+                mssql.close();
+                let response = {
+                  statusCode: 200,
+                  headers: {},
+                  isBase64Encoded: false,
+                  body: JSON.stringify(result2.recordset)
+                };
+                callback(null, response);
+              })
+              .catch((error2) => {
+                console.log(error2);
+              });
+          }
         })
         .catch((error) => {
           console.log(error);
