@@ -398,6 +398,26 @@ Resources:
           RDS_DATABASE: paa
       Layers:
         - arn:aws:lambda:ap-southeast-1:776435255066:layer:testLayer:2
+  getUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./
+      Handler: src/handlers/get-user.getUserHandler
+      Runtime: nodejs14.x
+      MemorySize: 128
+      Timeout: 60
+      Description: To get a user
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSLambda_FullAccess
+      Environment:
+        Variables:
+          RDS_USER: admin
+          RDS_PASSWORD: nxKFl7g7mxvExrkOqweP
+          RDS_SERVER: paa.cp6tsxfewlsf.ap-southeast-1.rds.amazonaws.com
+          RDS_DATABASE: paa
+      Layers:
+        - arn:aws:lambda:ap-southeast-1:776435255066:layer:testLayer:2
 
   # DynamoDB table to store item: {id: <ID>, name: <NAME>}
   SampleTable:

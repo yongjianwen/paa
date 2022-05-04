@@ -28,7 +28,7 @@ exports.getApplicationByUserAndIdHandler = (event, context, callback) => {
           if (result.recordset[0].UserType === 'Shelter') {
             req.query(`
               SELECT
-                aa.*, li.Name AS ListingName, us.Name AS UserName, img.FileName, us.UserId AS TargetUserId
+                aa.*, li.Name AS ListingName, us.Name AS UserName, img.FileName, us.UserId AS TargetUserId, us.Name AS ApplicantName, us.Address AS ApplicantAddress, us.Email AS ApplicantEmail, us.Phone AS ApplicantContact
               FROM [AdoptionApplication] aa
               INNER JOIN [Listing] li ON li.Id = aa.Listing
               INNER JOIN [User] us ON us.Id = aa.Applicant
@@ -58,10 +58,11 @@ exports.getApplicationByUserAndIdHandler = (event, context, callback) => {
           } else {
             req.query(`
               SELECT
-                aa.*, li.Name AS ListingName, us.Name AS UserName, img.FileName, us.UserId AS TargetUserId
+                aa.*, li.Name AS ListingName, us.Name AS UserName, img.FileName, us.UserId AS TargetUserId, us2.Name AS ApplicantName, us2.Address AS ApplicantAddress, us2.Email AS ApplicantEmail, us2.Phone AS ApplicantContact
               FROM [AdoptionApplication] aa
               INNER JOIN [Listing] li ON li.Id = aa.Listing
               INNER JOIN [User] us ON us.Id = li.ListedBy
+              INNER JOIN [User] us2 ON us2.Id = aa.Applicant
               LEFT JOIN [ListingImage] img ON img.Listing = li.Id AND img.Id = (SELECT MIN(img2.Id) FROM [ListingImage] img2 WHERE img2.Listing = li.Id)
               WHERE aa.Applicant = (SELECT Id FROM [User] WHERE UserId = \'` + userId + `\') AND aa.Id = ` + applicationId
             )

@@ -16,27 +16,62 @@ exports.reviewApplicationHandler = (event, context, callback) => {
   console.log(event);
   const userId = event.headers['userid'];
   const applicationId = event['pathParameters']['applicationId'];
-  const rating = JSON.parse(event.body).rating;
+  const body = JSON.parse(event.body);
+  const rating = body.rating === 0 ? null : body.rating;
+  const targetUserId = body.targetUserId;
 
   mssql.connect(config, (err) => {
-    console.log('test1');
     if (err) {
       console.log(err);
       callback(err);
     } else {
-      console.log('test2');
       const req = new mssql.Request();
-      req.query('UPDATE [AdoptionApplication] SET UserRating = \'' + rating + '\' WHERE Id = ' + applicationId)
-        .then(() => {
-          console.log('test3');
-          mssql.close();
-          let response = {
-            statusCode: 200,
-            headers: {},
-            isBase64Encoded: false,
-            body: JSON.stringify(true)
-          };
-          callback(null, response);
+      req.query('SELECT UserType FROM [User] WHERE UserId = \'' + userId + '\'')
+        .then((result) => {
+          let ratingUserType = '';
+          if (result.recordset[0].UserType === 'Shelter') {
+            ratingUserType = 'UserRating';
+          } else {
+            ratingUserType = 'ShelterRating';
+          }
+          let sql = '';
+          if (rating === null) {
+            sql = 'UPDATE [AdoptionApplication] SET ' + ratingUserType + ' = NULL WHERE Id = ' + applicationId;
+          } else {
+            sql = 'UPDATE [AdoptionApplication] SET ' + ratingUserType + ' = \'' + rating + '\' WHERE Id = ' + applicationId;
+          }
+          req.query(sql)
+            .then(() => {
+              if (result.recordset[0].UserType === 'Shelter') {
+                sql = 'SELECT ROUND(AVG(CAST(ShelterRating AS DECIMAL)), 2) FROM [AdoptionApplication] WHERE Applicant = (SELECT Id FROM [User] WHERE UserId = \'' + targetUserId + '\')';
+              } else {
+                sql = 'SELECT ROUND(AVG(CAST(UserRating AS DECIMAL)), 2) FROM [AdoptionApplication] aa INNER JOIN [Listing] li ON li.Id = aa.Listing WHERE li.ListedBy = (SELECT Id FROM [User] WHERE UserId = \'' + targetUserId + '\')';
+              }
+              req.query(sql)
+                .then((result2) => {
+                  console.log(result2.recordset);
+                  req.query('UPDATE [User] SET Rating = \'' + result2.recordset + '\' WHERE UserId = \'' + targetUserId + '\'')
+                    .then(() => {
+                      mssql.close();
+                      let response = {
+                        statusCode: 200,
+                        headers: {},
+                        isBase64Encoded: false,
+                        body: JSON.stringify(true)
+                      };
+                      callback(null, response);
+                    })
+                    .catch((error4) => {
+                      console.log(error4);
+                    })
+                })
+                .catch((error3) => {
+                  console.log(error3);
+                });
+            })
+            .catch((error2) => {
+              console.log(error2);
+            });
         })
         .catch((error) => {
           console.log(error);
