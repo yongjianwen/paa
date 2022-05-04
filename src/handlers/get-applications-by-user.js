@@ -28,7 +28,7 @@ exports.getApplicationsByUserHandler = (event, context, callback) => {
           if (result.recordset[0].UserType === 'Shelter') {
             req.query(`
               SELECT
-                aa.*, li.Name AS ListingName, us.Name AS UserName, img.FileName, us.UserId AS TargetUserId
+                aa.*, li.Name AS ListingName, us.Name AS UserName, img.FileName, us.UserId AS TargetUserId, us.ProfilePictureUrl
               FROM [AdoptionApplication] aa
               INNER JOIN [Listing] li ON li.Id = aa.Listing
               INNER JOIN [User] us ON us.Id = aa.Applicant
@@ -51,7 +51,7 @@ exports.getApplicationsByUserHandler = (event, context, callback) => {
           } else {
             req.query(`
               SELECT
-                aa.*, li.Name AS ListingName, us.Name AS UserName, img.FileName, us.UserId AS TargetUserId
+                aa.*, li.Name AS ListingName, us.Name AS UserName, img.FileName, us.UserId AS TargetUserId, us.ProfilePictureUrl
               FROM [AdoptionApplication] aa
               INNER JOIN [Listing] li ON li.Id = aa.Listing
               INNER JOIN [User] us ON us.Id = li.ListedBy
