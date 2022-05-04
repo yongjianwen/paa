@@ -30,9 +30,9 @@ exports.reviewApplicationHandler = (event, context, callback) => {
         .then((result) => {
           let ratingUserType = '';
           if (result.recordset[0].UserType === 'Shelter') {
-            ratingUserType = 'UserRating';
-          } else {
             ratingUserType = 'ShelterRating';
+          } else {
+            ratingUserType = 'UserRating';
           }
           let sql = '';
           if (rating === null) {
