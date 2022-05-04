@@ -16,7 +16,7 @@ exports.confirmListingHandler = (event, context, callback) => {
   console.log(event);
   const userId = event.headers['userid'];
   const applicationId = event['pathParameters']['applicationId'];
-  const action = event.body['action'];
+  const action = JSON.parse(event.body).action;
 
   mssql.connect(config, (err) => {
     if (err) {
