@@ -31,7 +31,7 @@ exports.getAllListingsHandler = (event, context, callback) => {
           (SELECT COUNT(*) FROM [AdoptionApplication] WHERE Status = \'Pending\' AND Listing = Listing.Id AND Applicant = (SELECT Id FROM [User] WHERE UserId = '` + userId + `')) AS MyApplicationCount,
         	(SELECT COUNT(*) FROM [ListingComment] WHERE Listing = Listing.Id AND CommentedBy = (SELECT Id FROM [User] WHERE UserId = '` + userId + `')) AS MyCommentCount,
         	(SELECT COUNT(*) FROM [ListingLike] WHERE Listing = Listing.Id AND LikedBy = (SELECT Id FROM [User] WHERE UserId = '` + userId + `')) AS MyLikeCount
-        FROM [Listing]
+        FROM [Listing] WHERE Status = \'Available\'
       `)
         .then((result) => {
           let promises = result.recordset.map((res) => {

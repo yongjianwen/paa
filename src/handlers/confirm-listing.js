@@ -38,14 +38,31 @@ exports.confirmListingHandler = (event, context, callback) => {
         .then((result) => {
           req.query('INSERT INTO [AdoptionApplicationDetail] (Status, CreatedDateTime, AdoptionApplication) VALUES (\'' + status + '\', SYSDATETIMEOFFSET(), ' + applicationId + ')')
             .then((result2) => {
-              mssql.close();
-              let response = {
-                statusCode: 200,
-                headers: {},
-                isBase64Encoded: false,
-                body: JSON.stringify(true)
-              };
-              callback(null, response);
+              if (status === 'Completed') {
+                req.query('UPDATE [Listing] SET Status = \'Archived\' WHERE Id = (SELECT Listing FROM [AdoptionApplication] WHERE Id = ' + applicationId + ')')
+                  .then((result3) => {
+                    mssql.close();
+                    let response = {
+                      statusCode: 200,
+                      headers: {},
+                      isBase64Encoded: false,
+                      body: JSON.stringify(true)
+                    };
+                    callback(null, response);    
+                  })
+                  .catch((error3) => {
+                    console.log(error3);
+                  });
+              } else {
+                mssql.close();
+                let response = {
+                  statusCode: 200,
+                  headers: {},
+                  isBase64Encoded: false,
+                  body: JSON.stringify(true)
+                };
+                callback(null, response);
+              }
             })
             .catch((error2) => {
               console.log(error2);

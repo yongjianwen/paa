@@ -29,7 +29,7 @@ exports.getUserHandler = (event, context, callback) => {
             statusCode: 200,
             headers: {},
             isBase64Encoded: false,
-            body: JSON.stringify(result)
+            body: JSON.stringify(result.recordset)
           };
           callback(null, response);
         })
