@@ -24,7 +24,7 @@ exports.getChatPairByUserHandler = (event, context, callback) => {
       const req = new mssql.Request();
       req.query(`
         SELECT
-          cp.*, us1.Name AS UserName1, us2.Name AS UserName2, us1.ProfilePictureUrl AS ProfilePictureUrl1, us2.ProfilePictureUrl AS ProfilePictureUrl2
+          cp.*, us1.ProfilePictureUrl AS ProfilePictureUrl1, us2.ProfilePictureUrl AS ProfilePictureUrl2
         FROM [ChatPair] cp
         INNER JOIN [User] us1 ON us1.UserId = cp.User1
         INNER JOIN [User] us2 ON us2.UserId = cp.User2
